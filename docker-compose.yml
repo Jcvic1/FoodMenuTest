@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  # PostgreSQL service
+  db:
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    restart: always
+    env_file:
+      - ./.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "db", "-U", "postgres"]
+      interval: 5s
+      timeout: 10s
+      retries: 5  
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+
+  # FoodMenu service
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    volumes:
+      - ./app:/app/app  
+    ports:
+      - "8000:8000"
+
+
+  # FoodMenu pytest service
+  pytest:
+    build:
+      context: .
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    volumes:
+      - ./app:/app
+      - ./app/tests:/app/tests 
+    command: ["pytest", "/app/tests"]   
+
+volumes:
+  pg_data:

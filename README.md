@@ -13,4 +13,4 @@
   POSTGRES_DB={POSTGRES_DB}
   POSTGRES_HOSTNAME=db
 
-4. Run docker-compose up --build to build image, start db, start app, run test and show test results in terminal
+4. Run docker-compose up --build to build image, start db, run test and show test results in terminal.
